@@ -35,15 +35,17 @@ export const signInWithLocal = async (data: LoginDataType) => {
 export const registerNewUser = async (data: RegisterDataType) => {
   const salt = bcrypt.genSaltSync(10)
   const hash = bcrypt.hashSync(data.password, salt)
-  try {
-    const newUser = await new User({
-      username: data.username,
-      password: hash,
-      fullname: data.fullname,
-      role: data.role
-    }).save()
-    return newUser
-  } catch (e) {
-    console.log(e)
-  }
+
+  const newUser = await new User({
+    username: data.username,
+    password: hash,
+    fullname: data.fullname,
+    role: data.role
+  }).save()
+  return newUser
+}
+
+export const isUsernameExist = async (username: string) => {
+  const existUser = await User.find({ username: username })
+  return existUser.length !== 0 ? true : false
 }
