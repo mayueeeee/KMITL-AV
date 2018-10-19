@@ -7,6 +7,7 @@
   "author": "Sarunyu Chankong <sarunyu.you@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "@sentry/node": "^4.1.1",
     "axios": "^0.18.0",
     "bcrypt-nodejs": "^0.0.3",
     "body-parser": "^1.18.3",
