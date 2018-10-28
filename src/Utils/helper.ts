@@ -6,3 +6,13 @@ export const getENV = (key: string) => {
 }
 
 export const getServerPort = () =>  (this.getENV('PRODUCTION') === '1') ? this.getENV('SERVICE_PORT'): 3000
+
+// export const signToken = (id: string, expIn: number, opt = {}) => {
+//   const date = getDateTime()
+//   return jwt.sign({
+//     id: id,
+//     createAt: date,
+//     expAt: date.add(expIn, 'days'),
+//     ...opt
+//   }, getENV('JWT_SECRET'))
+// }
