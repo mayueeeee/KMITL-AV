@@ -7,6 +7,7 @@ import {ExpressErrorHandler} from './Services/errorHandler'
 import * as db from './database/connection'
 import { routes } from './Routes'
 
+
 const app = express()
 db.connect()
 Sentry.init({ dsn: getENV('SENTRY_KEY') })

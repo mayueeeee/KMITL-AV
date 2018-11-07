@@ -5,7 +5,7 @@ export const getENV = (key: string) => {
   return process.env[key]
 }
 
-export const getServerPort = () =>  (this.getENV('PRODUCTION') === '1') ? this.getENV('SERVICE_PORT'): 3000
+export const getServerPort = () =>  (this.getENV('PRODUCTION') === '1') ? this.getENV('SERVICE_PORT'): 5000
 
 // export const signToken = (id: string, expIn: number, opt = {}) => {
 //   const date = getDateTime()
