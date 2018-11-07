@@ -1,8 +1,9 @@
 import * as joi from 'joi'
 import axios from 'axios'
 import { User } from '../Models/User'
-import { registerNewUser, isUsernameExist, signInWithLocal, signInWithKMITL } from '../Services/auth'
+import { registerNewUser, isUsernameExist, signInWithLocal, signInWithKMITL ,generateAccessToken } from '../Services/auth'
 import { HTTP } from '../constants/http'
+import * as Sentry from '@sentry/node'
 
 export const login = async (req, res, next) => {
   const userData = {
@@ -10,14 +11,21 @@ export const login = async (req, res, next) => {
     password: req.body.password
   }
   try {
-    await signInWithLocal(userData.username, userData.password)
+    const user = await signInWithLocal(userData.username, userData.password)
+    const token = await generateAccessToken(user.id)
+    // cons ole.log(token)
     res.json({
           success:true,
-          access_token: 'kikikik',
-          refresh_token: 'kikikik'
+          access_token: token,
+          refresh_token: 'kikikik',
+          user: {
+            fullname: user.fullname,
+            role: user.role
+          }
         })
   } catch (e) {
-    res.status(e.code).json({
+    Sentry.captureException(e)
+    res.status(e.code||500).json({
       success: false,
       message: e.message
     })

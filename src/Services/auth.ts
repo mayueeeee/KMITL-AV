@@ -3,8 +3,8 @@ import * as bcrypt from 'bcrypt-nodejs'
 import { getENV } from '../Utils/helper'
 import { User } from '../Models/User'
 import * as jwt from 'jsonwebtoken'
-import {CustomError} from '../Services/errorHandler'
-import {HTTP} from '../constants/http'
+import { CustomError } from '../Services/errorHandler'
+import { HTTP } from '../constants/http'
 
 interface LoginDataType extends Document {
   username: string
@@ -29,10 +29,11 @@ export const signInWithKMITL = async (data: LoginDataType) => {
 
 export const signInWithLocal = async (username: string, password: string) => {
   const user = await User.findOne({ username: username })
-  if(user===null) throw new CustomError('User not found',HTTP.NOT_FOUND)  
+  console.log(user)
+  if (user === null) throw new CustomError('User not found', HTTP.NOT_FOUND)
   const validateRes = bcrypt.compareSync(password, user.password)
-  if(validateRes===false) throw new CustomError('Wrong password',HTTP.UNAUTHORIZED)  
-  return(user)
+  if (validateRes === false) throw new CustomError('Wrong password', HTTP.UNAUTHORIZED)
+  return user
 }
 
 export const registerNewUser = async (data: RegisterDataType) => {
@@ -47,8 +48,11 @@ export const isUsernameExist = async (username: string) => {
 
 // export const validatePassword = async (pass)
 
-const generateAccessToken = async (userID: string) => {
-  const token = jwt.sign({ user: userID }, { algorithm: 'HS384', expiresIn: '10m' }, getENV('JWT_SECRET'))
+export const generateAccessToken = async (userID: string) => {
+  const token = jwt.sign({ user: userID }, getENV('JWT_SECRET'),{ algorithm: 'HS384', expiresIn: '10m' })
+  // const user = User.findById(userID)
+  // user.update
+  console.log(token)
 
   return token
 }

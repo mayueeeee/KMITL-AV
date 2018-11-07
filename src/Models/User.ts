@@ -1,11 +1,16 @@
-import { model, Schema, Document } from 'mongoose';
+import { model, Schema, Document } from 'mongoose'
 import * as bcrypt from 'bcrypt-nodejs'
 
-interface IUser extends Document{
-  username: string,
-  password: string,
-  fullname: string,
+interface IAccessToken extends Document {
+  access_token: string
+  refresh_token: string
+}
+interface IUser extends Document {
+  username: string
+  password: string
+  fullname: string
   role: string
+  token: IAccessToken
 }
 
 const accessTokenSchema = new Schema({
@@ -17,10 +22,9 @@ const userSchema = new Schema({
   username: String,
   password: String,
   fullname: String,
-  role: String
+  role: String,
+  token: accessTokenSchema
 })
-
-
 
 userSchema.pre<IUser>('save', function(next) {
   if (!this.isModified('password')) return next()
