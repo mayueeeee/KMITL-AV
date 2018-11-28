@@ -60,8 +60,8 @@ export const validateToken = async (req, res, next) => {
     try {
       // console.log(token.split('Bearer '))
       const data = await decodeToken(token.split('Bearer ')[1])
-      // console.log(data)
-      req.body['uid'] = data.user
+      console.log(data)
+      req.body.userID = data.user
       next()
     } catch (e) {
       console.log(e)

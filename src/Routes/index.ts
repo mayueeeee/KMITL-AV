@@ -8,7 +8,6 @@ import { validateToken } from '../Controllers/UserController';
 const routes = express.Router()
 routes.get('/',home)
 routes.use(userRoute)
-
 routes.use(validateToken)
 
 
