@@ -1,30 +1,25 @@
 import { model, Schema, Document } from 'mongoose'
 
-interface IAccessToken extends Document {
-  access_token: string
-  refresh_token: string
+interface Itransaction extends Document {
+  userID: string
+  roomID: string
+  reservationID: string
+  status: string,
+  startTime: Date,
+  createdAt: Date,
+  updatedAt: Date
+
 }
-interface IUser extends Document {
-  username: string
-  password: string
-  fullname: string
-  role: string
-  token: IAccessToken
-}
 
-const accessTokenSchema = new Schema({
-  access_token: String,
-  refresh_token: String
-})
+const transactionSchema = new Schema(
+  {
+    userID: {type:String,required:true},
+    roomID: {type:String,required:true},
+    reservationID: {type:String,required:true},
+    status: { type: String, default: 'active' },
+    startTime: Date,
+  },
+  { timestamps: true }
+)
 
-const userSchema = new Schema({
-  username: String,
-  password: String,
-  fullname: String,
-  role: String,
-  token: accessTokenSchema
-})
-
-
-
-export const User = model<IUser>('User', userSchema)
+export const Transaction = model<Itransaction>('Transaction', transactionSchema)
