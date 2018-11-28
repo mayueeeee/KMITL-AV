@@ -5,6 +5,7 @@ import { User } from '../Models/User'
 import * as jwt from 'jsonwebtoken'
 import { CustomError } from '../Services/errorHandler'
 import { HTTP } from '../constants/http'
+import { validate } from '../Controllers/ReservationController';
 
 interface LoginDataType extends Document {
   username: string
@@ -29,7 +30,7 @@ export const signInWithKMITL = async (data: LoginDataType) => {
 
 export const signInWithLocal = async (username: string, password: string) => {
   const user = await User.findOne({ username: username })
-  console.log(user)
+  // console.log(user)
   if (user === null) throw new CustomError('User not found', HTTP.NOT_FOUND)
   const validateRes = bcrypt.compareSync(password, user.password)
   if (validateRes === false) throw new CustomError('Wrong password', HTTP.UNAUTHORIZED)
@@ -55,4 +56,23 @@ export const generateAccessToken = async (userID: string) => {
   console.log(token)
 
   return token
+}
+
+export const decodeToken = async (token: string) => {
+  try{
+    console.log(token)
+    const decoded = jwt.verify(token,getENV('JWT_SECRET'))
+    console.log(decoded)
+    return decoded
+  }
+  catch(e){
+    console.log(e)
+    throw e
+  }
+  
+  // const user = User.findById(userID)
+  // user.update
+  
+
+  
 }

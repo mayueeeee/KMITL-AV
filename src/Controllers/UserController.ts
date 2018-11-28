@@ -1,7 +1,7 @@
 import * as joi from 'joi'
 import axios from 'axios'
 import { User } from '../Models/User'
-import { registerNewUser, isUsernameExist, signInWithLocal, signInWithKMITL ,generateAccessToken } from '../Services/auth'
+import { registerNewUser, isUsernameExist, signInWithLocal, signInWithKMITL, generateAccessToken, decodeToken } from '../Services/auth'
 import { HTTP } from '../constants/http'
 import * as Sentry from '@sentry/node'
 
@@ -14,14 +14,14 @@ export const login = async (req, res, next) => {
     const user = await signInWithLocal(userData.username, userData.password)
     const token = await generateAccessToken(user.id)
     res.json({
-          success:true,
-          access_token: token,
-          refresh_token: 'kikikik',
-          user: {
-            fullname: user.fullname,
-            role: user.role
-          }
-        })
+      success: true,
+      access_token: token,
+      refresh_token: 'kikikik',
+      user: {
+        fullname: user.fullname,
+        role: user.role
+      }
+    })
   } catch (e) {
     next(e)
   }
@@ -45,5 +45,27 @@ export const register = async (req, res, next) => {
     })
   } catch (e) {
     next(e)
+  }
+}
+
+export const validateToken = async (req, res, next) => {
+  const token = req.get('Authorization')
+  console.log(token)
+  if (token === undefined||token===null||token===''||token==="Bearer null") {
+    res.status(401).json({
+      success: false,
+      message: 'Authorization required'
+    })
+  } else {
+    try {
+      // console.log(token.split('Bearer '))
+      const data = await decodeToken(token.split('Bearer ')[1])
+      // console.log(data)
+      req.body['uid'] = data.user
+      next()
+    } catch (e) {
+      console.log(e)
+      next(e)
+    }
   }
 }
