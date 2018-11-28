@@ -1,4 +1,4 @@
-import { makeReservation, getRoomFromType } from '../Services/reservation'
+import { makeReservation, getRoomFromType, isTimeAvaliable } from '../Services/reservation';
 import { CustomError } from '../Services/errorHandler'
 import { Room } from '../Models/Room'
 
@@ -35,21 +35,16 @@ export const getRoomList = async (req, res, next) => {
 
 export const validate = async (req, res, next) => {
   const reserveData = req.body
+  console.log('eieie')
   try {
-    // await makeReservation(reserveData.userID, reserveData.RoomID, reserveData.startTime, reserveData.endTime)
-    // let reservation = await Room.findById(reserveData.room_id)
-    //  console.log('validate')
-    //  console.log(reservation)
+    console.log(req.body.userID)    
+    const canReserve = await isTimeAvaliable(reserveData.room_id,reserveData.start_time,reserveData.end_time)
+    // console.log(`muii ${canReserve}`)    
     res.json({
       success: true,
-      canReserve: false,
-      reason: 'เต็มละจ้า5555'
+      canReserve: canReserve
     })
   } catch (e) {
-    if (e.name === 'CastError') {
-      next(new CustomError('Room not found', 400))
-    } else {
-      next(e)
-    }
+    next(e)
   }
 }
