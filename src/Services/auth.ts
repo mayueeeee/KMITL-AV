@@ -50,23 +50,21 @@ export const isUsernameExist = async (username: string) => {
 // export const validatePassword = async (pass)
 
 export const generateAccessToken = async (userID: string) => {
-  const token = jwt.sign({ user: userID }, getENV('JWT_SECRET'),{ algorithm: 'HS384', expiresIn: '10m' })
+  const token = jwt.sign({ user: userID }, getENV('JWT_SECRET'),{ algorithm: 'HS384', expiresIn: '1d' })
   // const user = User.findById(userID)
   // user.update
-  console.log(token)
-
+  // console.log(token)
   return token
 }
 
 export const decodeToken = async (token: string) => {
-  try{
-    console.log(token)
+  try{    
     const decoded = jwt.verify(token,getENV('JWT_SECRET'))
-    console.log(decoded)
+    // console.log(decoded)
     return decoded
   }
   catch(e){
-    console.log(e)
+    // console.log(e)
     throw e
   }
   
