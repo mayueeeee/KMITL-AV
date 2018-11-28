@@ -13,7 +13,6 @@ export const login = async (req, res, next) => {
   try {
     const user = await signInWithLocal(userData.username, userData.password)
     const token = await generateAccessToken(user.id)
-    // cons ole.log(token)
     res.json({
           success:true,
           access_token: token,
@@ -24,11 +23,7 @@ export const login = async (req, res, next) => {
           }
         })
   } catch (e) {
-    Sentry.captureException(e)
-    res.status(e.code||500).json({
-      success: false,
-      message: e.message
-    })
+    next(e)
   }
 }
 
