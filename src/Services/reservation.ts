@@ -1,5 +1,6 @@
 import { Room } from '../Models/Room'
 import { isWithinRange } from 'date-fns'
+import { Transaction } from '../Models/Transaction';
 
 export const makeReservation = async (userID: string, roomID: string, startTime: Date, endTime: Date) => {
   const reservationData = {
@@ -11,6 +12,18 @@ export const makeReservation = async (userID: string, roomID: string, startTime:
     const room = await Room.findById(roomID)
     room.reservation.push(reservationData)
     room.save()
+    if(room){      
+      const transactionData = {
+        userID: userID,
+        roomID: roomID,
+        reservationID: room.reservation[room.reservation.length - 1]._id,
+        startTime: startTime
+      }
+      // console.log(room)
+      const transaction = await new Transaction(transactionData).save()
+      // console.log(transaction)
+    }
+    return room
   }
   catch(e){
     throw e
