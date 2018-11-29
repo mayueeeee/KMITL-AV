@@ -24,6 +24,7 @@ const roomSchema = new Schema({
   is_active:Boolean,
   type: String,
   Capacity: Number,
+  // reservation: [{ type: Schema.Types.ObjectId, ref: 'ReservationSlotSchema' }]
   reservation: [ReservationSlotSchema]
 })
 

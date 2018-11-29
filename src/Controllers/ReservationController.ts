@@ -63,13 +63,15 @@ export const validate = async (req, res, next) => {
 export const listReservation = async (req, res, next) => {
   try {
     const reserveList = await Transaction.find({ userID: req.body.userID }).select('-userID -updatedAt -startTime')
+    console.log(reserveList)
 
     let finalList = []
     for (let j = 0; j < reserveList.length; j++) {
       const room = await Room.findById(reserveList[j].roomID)
       for (let i = 0; i < room.reservation.length; i++) {
-        if (room.reservation[i]._id.toString() === reserveList[j].reservationID.toString()) {          
-          let yay = { ...room.reservation[i]._doc,name:room.name, type: room.type,createAt:reserveList[j].createdAt }         
+        if (room.reservation[i]._id.toString() === reserveList[j].reservationID.toString()) {
+          // console.log(room.reservation[i])
+          let yay = { transaction_id:reserveList[j]._id,...room.reservation[i]._doc, name: room.name, type: room.type, status: reserveList[j].status, createAt: reserveList[j].createdAt }
           finalList.push(yay)
         }
       }
@@ -93,7 +95,7 @@ export const listReservation = async (req, res, next) => {
     //   //     }
     //   // })
 
-    console.log(finalList)
+    // console.log(finalList)
 
     // let yay = room.reservation.find(x=>{
     //   return x._id.toString()===ele.reservationID.toString()
@@ -105,6 +107,31 @@ export const listReservation = async (req, res, next) => {
       success: true,
       reserve_list: finalList
     })
+  } catch (e) {
+    next(e)
+  }
+}
+
+export const cancel = async (req, res, next) => {
+  try {
+    console.log(req.body)
+    const transaction = await Transaction.findByIdAndUpdate(req.body.transaction_id,{$set:{ status: 'cancel' }})
+    console.log(transaction)    
+    const room = await Room.findById(transaction.roomID)
+    console.log(transaction.reservationID)
+    let res_Array = JSON.parse(JSON.stringify(room.reservation))
+    const yay = res_Array.filter(ele=>{
+      return ele._id.toString()!==transaction.reservationID
+    })
+    room.reservation = yay
+    room.save()
+    // console.log(yay)
+    // // console.log(room.reservation)
+    res.json({
+      success: true,
+      // reserve_list: finalList
+    })
+    
   } catch (e) {
     next(e)
   }
